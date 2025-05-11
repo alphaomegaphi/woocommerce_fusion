@@ -366,7 +366,9 @@ class SynchroniseItem(SynchroniseWooCommerce):
 			wc_product.regular_price = get_item_price_rate(item) or "0"
 
 			self.set_product_fields(wc_product, item)
-
+  		  	
+			# Force new variations to be created as published (not draft)
+			wc_product.status = "publish"
 			wc_product.insert()
 			self.woocommerce_product = wc_product
 
