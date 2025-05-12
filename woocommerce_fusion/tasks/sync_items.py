@@ -618,9 +618,23 @@ def get_list_of_wc_products(
 		filters.append(["WooCommerce Product", "date_modified", ">", date_time_from])
 	if item:
 		#filters.append(["WooCommerce Product", "id", "=", item.item_woocommerce_server.woocommerce_id])
-		filters.append(["WooCommerce Product", "woocommerce_id", "=", item.item_woocommerce_server.woocommerce_id])
+#		filters.append(["WooCommerce Product", "woocommerce_id", "=", item.item_woocommerce_server.woocommerce_id])
+#		servers = [item.item_woocommerce_server.woocommerce_server]
+ # ==== LOCAL LOOKUP by woocommerce_id (bypass remote API filter) ====
+		parent_docs = frappe.get_all(
+			"WooCommerce Product",
+			filters={
+				"woocommerce_server": item.item_woocommerce_server.woocommerce_server,
+				"woocommerce_id": item.item_woocommerce_server.woocommerce_id
+			},
+			fields=["name"],
+			limit_page_length=1
+		)
+		if parent_docs:
+			# return a list of one WooCommerceProduct doc
+			return [frappe.get_doc("WooCommerce Product", parent_docs[0].name)]
+		# else fall back to remote fetch if not found locally
 		servers = [item.item_woocommerce_server.woocommerce_server]
-
 	while new_results:
 		woocommerce_product = frappe.get_doc({"doctype": "WooCommerce Product"})
 		new_results = woocommerce_product.get_list(
