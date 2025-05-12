@@ -617,7 +617,8 @@ def get_list_of_wc_products(
 	if date_time_from:
 		filters.append(["WooCommerce Product", "date_modified", ">", date_time_from])
 	if item:
-		filters.append(["WooCommerce Product", "id", "=", item.item_woocommerce_server.woocommerce_id])
+		#filters.append(["WooCommerce Product", "id", "=", item.item_woocommerce_server.woocommerce_id])
+		filters.append(["WooCommerce Product", "woocommerce_id", "=", item.item_woocommerce_server.woocommerce_id])
 		servers = [item.item_woocommerce_server.woocommerce_server]
 
 	while new_results:
