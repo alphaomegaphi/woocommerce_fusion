@@ -97,21 +97,22 @@ def update_stock_levels_on_woocommerce_site(item_code):
 					timeout=40,
 				)
 
-				# Sum all quantities from select warehouses and round the total down (WooCommerce API doesn't accept float values)
+				# 1) Compute integer quantity once:Sum all quantities from select warehouses and round the total down 
+    			# (WooCommerce API doesn't accept float values)
+				qty = math.floor(
+					sum(
+						bin.actual_qty
+						if not wc_server.subtract_reserved_stock
+						else bin.actual_qty - bin.reserved_qty
+						for bin in bins
+						if bin.warehouse in [row.warehouse for row in wc_server.warehouses]
+					)
+				)
+    			# 2) Build payload with explicit manage_stock and status
 				data_to_post = {
-					#Setting manage stock checkbox to true in WooCommerce
-        			"manage_stock": True,
-					"stock_quantity": math.floor(
-						sum(
-							bin.actual_qty
-							if not wc_server.subtract_reserved_stock
-							else bin.actual_qty - bin.reserved_qty
-							for bin in bins
-							if bin.warehouse in [row.warehouse for row in wc_server.warehouses]
-						)
-					),
-            		# explicitly set status based on quantity (avoids “instock” vs “outofstock” mismatches)
-     				 "stock_status": "instock" if math.floor(...) > 0 else "outofstock"
+        			"manage_stock": True, #Setting manage stock checkbox to true in WooCommerce
+					"stock_quantity": qty, # new stock level
+     				 "stock_status": "instock" if qty > 0 else "outofstock" # explicitly set status based on quantity (avoids “instock” vs “outofstock” mismatches)
 				}
 
 				try:
