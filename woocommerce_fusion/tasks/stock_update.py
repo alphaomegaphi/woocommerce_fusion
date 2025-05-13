@@ -99,6 +99,8 @@ def update_stock_levels_on_woocommerce_site(item_code):
 
 				# Sum all quantities from select warehouses and round the total down (WooCommerce API doesn't accept float values)
 				data_to_post = {
+					#Setting manage stock checkbox to true in WooCommerce
+        			"manage_stock": True,
 					"stock_quantity": math.floor(
 						sum(
 							bin.actual_qty
@@ -108,6 +110,8 @@ def update_stock_levels_on_woocommerce_site(item_code):
 							if bin.warehouse in [row.warehouse for row in wc_server.warehouses]
 						)
 					)
+            		# explicitly set status based on quantity (avoids “instock” vs “outofstock” mismatches)
+     				 "stock_status": "instock" if math.floor(...) > 0 else "outofstock"
 				}
 
 				try:
