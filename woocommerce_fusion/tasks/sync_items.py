@@ -617,23 +617,23 @@ def get_list_of_wc_products(
 	if date_time_from:
 		filters.append(["WooCommerce Product", "date_modified", ">", date_time_from])
 	if item:
-		#filters.append(["WooCommerce Product", "id", "=", item.item_woocommerce_server.woocommerce_id])
-#		filters.append(["WooCommerce Product", "woocommerce_id", "=", item.item_woocommerce_server.woocommerce_id])
-#		servers = [item.item_woocommerce_server.woocommerce_server]
+		# filters.append(["WooCommerce Product", "id", "=", item.item_woocommerce_server.woocommerce_id])
+		# filters.append(["WooCommerce Product", "woocommerce_id", "=", item.item_woocommerce_server.woocommerce_id])
+		# servers = [item.item_woocommerce_server.woocommerce_server]
 # ==== LOCAL LOOKUP by woocommerce_id (bypass remote API filter) ====
-      # ────────────────────────────────────────────────────────────────
-       # Local DB lookup for the parent WooCommerce Product by its woocommerce_id
-	  server_name = item.item_woocommerce_server.woocommerce_server
-	  parent_name = frappe.db.get_value(
-		  "WooCommerce Product",
-		  {"woocommerce_server": server_name, "woocommerce_id": item.item_woocommerce_server.woocommerce_id},
-		  "name"
-	  )
-	  if parent_name:
-		  # return a list containing the already‐saved parent DocType
-		  return [frappe.get_doc("WooCommerce Product", parent_name)]
-	  # If not found locally, fall back to the remote‐API pagination below
-	  servers = [server_name]
+# ────────────────────────────────────────────────────────────────
+    # Local DB lookup for the parent WooCommerce Product by its woocommerce_id
+		server_name = item.item_woocommerce_server.woocommerce_server
+		parent_name = frappe.db.get_value(
+			"WooCommerce Product",
+			{"woocommerce_server": server_name, "woocommerce_id": item.item_woocommerce_server.woocommerce_id},
+			"name"
+	 	)
+		if parent_name:
+			# return a list containing the already‐saved parent DocType
+			return [frappe.get_doc("WooCommerce Product", parent_name)]
+		# If not found locally, fall back to the remote‐API pagination below
+		servers = [server_name]
 
 	while new_results:
 		woocommerce_product = frappe.get_doc({"doctype": "WooCommerce Product"})
