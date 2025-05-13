@@ -109,7 +109,7 @@ def update_stock_levels_on_woocommerce_site(item_code):
 							for bin in bins
 							if bin.warehouse in [row.warehouse for row in wc_server.warehouses]
 						)
-					)
+					),
             		# explicitly set status based on quantity (avoids “instock” vs “outofstock” mismatches)
      				 "stock_status": "instock" if math.floor(...) > 0 else "outofstock"
 				}
